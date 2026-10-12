@@ -20,12 +20,12 @@ Legend: `[x]` done, `[ ]` pending. Phases are ordered; each has a **Done when** 
 ---
 
 ## Phase 1: Project setup
-- [ ] Python 3.12 venv, `pyproject.toml`, pinned deps (`pip-compile` or `uv`)
-- [ ] Folder layout: `app/`, `workers/`, `agent/`, `sandbox/`, `tests/`, `infra/`
-- [ ] `.env.example` (no real values): `APP_SECRET`, `FERNET_KEY`, `DATABASE_URL`, `REDIS_URL`, `GROQ_API_KEY`, `GROQ_MODEL`, `LMS_BASE_URL`
-- [ ] Config loader with fail-fast validation (`pydantic-settings`)
-- [ ] Structured logging (JSON), with a redaction filter for secrets and passwords
-- [ ] Makefile / task runner / PowerShell scripts: `dev`, `test`, `lint`
+- [x] Python 3.12 venv, `pyproject.toml`, pinned deps (`pip-compile` or `uv`)
+- [x] Folder layout: `app/`, `workers/`, `agent/`, `sandbox/`, `tests/`, `infra/`
+- [x] `.env.example` (no real values): `APP_SECRET`, `FERNET_KEY`, `DATABASE_URL`, `REDIS_URL`, `GROQ_API_KEY`, `GROQ_MODEL`, `LMS_BASE_URL`
+- [x] Config loader with fail-fast validation (`pydantic-settings`)
+- [x] Structured logging (JSON), with a redaction filter for secrets and passwords
+- [x] Makefile / task runner / PowerShell scripts: `dev`, `test`, `lint`
 
 **Done when:** `dev` starts an empty app and CI-style `lint` and `test` pass.
 
