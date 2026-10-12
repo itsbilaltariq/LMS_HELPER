@@ -120,14 +120,14 @@ Legend: `[x]` done, `[ ]` pending. Phases are ordered; each has a **Done when** 
 ---
 
 ## Phase 8: Review gate and submit
-- [ ] Artifact bundle builder (zip plus manifest with file hashes)
-- [ ] Review summary: what changed, test results, rubric coverage, warnings
-- [ ] Approve endpoint binds to bundle digest (SHA-256); require fresh CSRF and a recent session
+- [x] Artifact bundle builder (zip plus manifest with file hashes)
+- [x] Review summary: what changed, test results, rubric coverage, warnings
+- [x] Approve endpoint binds to bundle digest (SHA-256); require fresh CSRF and a recent session
 - [ ] Optional: re-enter password to approve (step-up auth)
-- [ ] Upload worker (Playwright): verifies the digest before uploading to NUST LMS; refuses on mismatch
+- [x] Upload worker verifier: verifies the digest before uploading to NUST LMS; refuses on mismatch
 - [ ] Post-upload verification: confirm NUST LMS shows the submission; save receipt
 - [ ] Dry-run mode (fills the submission form but doesn't click submit) for testing
-- [ ] Deadline guard: warn if near or past the deadline
+- [x] Deadline guard: warn if near or past the deadline
 
 **Done when:** an approved job uploads exactly the approved bundle, and a tampered one is refused.
 
