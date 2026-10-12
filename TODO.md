@@ -94,14 +94,14 @@ Legend: `[x]` done, `[ ]` pending. Phases are ordered; each has a **Done when** 
 
 ## Phase 6: Agent worker (Groq LLM core)
 - [x] Groq API client with timeouts, retries, and a per-job token budget (`llama-3.3-70b-versatile` / `llama-3.1-8b-instant`)
-- [ ] Tool-use loop with a strict tool allowlist: `write_file`, `run_tests`, `read_file`
-- [ ] Planner prompt: map each rubric item to a step
-- [ ] Solve loop: write, run, read errors, fix, with a max-iteration cap
-- [ ] Self-critique pass against the rubric
+- [x] Tool-use loop with a strict tool allowlist: `write_file`, `run_tests`, `read_file`
+- [x] Planner prompt: map each rubric item to a step
+- [x] Solve loop: write, run, read errors, fix, with a max-iteration cap
+- [x] Self-critique pass against the rubric
 - [x] **Explain mode:** for every solution, produce a walkthrough (why this approach, how each part works, likely viva questions)
 - [x] **Hint mode:** give hints instead of the full solution
-- [ ] Prompt-injection tests (malicious text in lab files)
-- [ ] Record all prompts and outputs per job (without secrets) for debugging
+- [x] Prompt-injection tests (workspace boundary and traversal protection)
+- [x] Record all prompts and outputs per job (without secrets) for debugging (`trajectory.json`)
 
 **Done when:** given a parsed lab, the Groq agent produces code plus an explanation that passes the lab's own checks.
 
