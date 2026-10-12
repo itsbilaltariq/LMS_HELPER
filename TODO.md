@@ -32,14 +32,14 @@ Legend: `[x]` done, `[ ]` pending. Phases are ordered; each has a **Done when** 
 ---
 
 ## Phase 2: Secure API core (starter: `app.py`)
-- [ ] Cookie sessions: `HttpOnly`, `Secure`, `SameSite=Strict`, `__Host-` prefix
-- [ ] CSRF token bound to session (HMAC)
-- [ ] Argon2id password hashing, dummy-hash timing safety
-- [ ] Login rate limiting
-- [ ] Security headers middleware
-- [ ] Fernet-encrypted LMS credentials
-- [ ] Approval gate bound to artifact SHA-256
-- [ ] Split `app.py` into modules: `auth.py`, `jobs.py`, `security.py`, `models.py`
+- [x] Cookie sessions: `HttpOnly`, `Secure`, `SameSite=Strict`, `__Host-` prefix
+- [x] CSRF token bound to session (HMAC)
+- [x] Argon2id password hashing, dummy-hash timing safety
+- [x] Login rate limiting
+- [x] Security headers middleware
+- [x] Fernet-encrypted LMS credentials
+- [x] Approval gate bound to artifact SHA-256
+- [x] Split `app.py` into modules: `auth.py`, `jobs.py`, `security.py`, `models.py`
 - [ ] Replace in-memory `DB` with PostgreSQL (SQLAlchemy 2 + Alembic migrations)
 - [ ] Move rate limiting to Redis (works across multiple workers)
 - [ ] Session rotation on login; revoke all sessions on password change
