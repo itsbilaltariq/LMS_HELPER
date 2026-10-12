@@ -82,11 +82,11 @@ Legend: `[x]` done, `[ ]` pending. Phases are ordered; each has a **Done when** 
 ---
 
 ## Phase 5: Parse stage
-- [ ] Extract text and structure from PDF (PyMuPDF); OCR fallback for scanned PDFs
-- [ ] Groq LLM step to produce structured JSON: tasks, deliverables, rubric, deadlines, allowed languages/tools
-- [ ] Validate JSON against a pydantic schema; retry on invalid output
-- [ ] Treat document text as untrusted (prompt-injection defense): never let lab text trigger tool calls or change system rules
-- [ ] Store parsed result with a version number
+- [x] Extract text and structure from PDF (PyMuPDF); OCR fallback for scanned PDFs
+- [x] Groq LLM step to produce structured JSON: tasks, deliverables, rubric, deadlines, allowed languages/tools
+- [x] Validate JSON against a pydantic schema; retry on invalid output
+- [x] Treat document text as untrusted (prompt-injection defense): never let lab text trigger tool calls or change system rules
+- [x] Store parsed result with a version number
 
 **Done when:** a sample lab PDF becomes a validated task list.
 
