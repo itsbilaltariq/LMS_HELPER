@@ -93,13 +93,13 @@ Legend: `[x]` done, `[ ]` pending. Phases are ordered; each has a **Done when** 
 ---
 
 ## Phase 6: Agent worker (Groq LLM core)
-- [ ] Groq API client with timeouts, retries, and a per-job token budget (`llama-3.3-70b-versatile` / `llama-3.1-8b-instant`)
+- [x] Groq API client with timeouts, retries, and a per-job token budget (`llama-3.3-70b-versatile` / `llama-3.1-8b-instant`)
 - [ ] Tool-use loop with a strict tool allowlist: `write_file`, `run_tests`, `read_file`
 - [ ] Planner prompt: map each rubric item to a step
 - [ ] Solve loop: write, run, read errors, fix, with a max-iteration cap
 - [ ] Self-critique pass against the rubric
-- [ ] **Explain mode:** for every solution, produce a walkthrough (why this approach, how each part works, likely viva questions)
-- [ ] **Hint mode:** give hints instead of the full solution
+- [x] **Explain mode:** for every solution, produce a walkthrough (why this approach, how each part works, likely viva questions)
+- [x] **Hint mode:** give hints instead of the full solution
 - [ ] Prompt-injection tests (malicious text in lab files)
 - [ ] Record all prompts and outputs per job (without secrets) for debugging
 
