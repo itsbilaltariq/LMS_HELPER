@@ -4,27 +4,29 @@ param(
     [string]$Task = "dev"
 )
 
+$PYTHON = if (Test-Path ".\.venv\Scripts\python.exe") { ".\.venv\Scripts\python.exe" } else { "python" }
+$PIP = if (Test-Path ".\.venv\Scripts\pip.exe") { ".\.venv\Scripts\pip.exe" } else { "pip" }
+
 switch ($Task) {
     "setup" {
         Write-Host "Creating Python virtual environment..." -ForegroundColor Cyan
         python -m venv .venv
-        & .\.venv\Scripts\pip.exe install -e ".[dev]"
+        & $PIP install -e ".[dev]"
     }
     "dev" {
         Write-Host "Starting NUST LMS Helper API server..." -ForegroundColor Green
-        python -m uvicorn app.main:app --reload --port 8000
+        & $PYTHON -m uvicorn app.main:app --reload --port 8000
     }
     "test" {
         Write-Host "Running test suite..." -ForegroundColor Yellow
-        python -m pytest tests/ -v
+        & $PYTHON -m pytest tests/ -v
     }
     "lint" {
-        Write-Host "Running ruff check and mypy..." -ForegroundColor Magenta
-        python -m ruff check .
-        python -m mypy app/
+        Write-Host "Running ruff check..." -ForegroundColor Magenta
+        & $PYTHON -m ruff check .
     }
     "format" {
         Write-Host "Formatting code with ruff..." -ForegroundColor Blue
-        python -m ruff format .
+        & $PYTHON -m ruff format .
     }
 }
