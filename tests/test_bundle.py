@@ -89,3 +89,34 @@ def test_review_summary_generation(tmp_path: Path):
     assert "main.py" in summary
     assert "Explain recursion" in summary
     assert "2026-10-20 23:59" in summary
+
+
+def test_build_multi_format_submission_bundle(tmp_path: Path):
+    """Verify auto-generation of .ipynb, .docx, and .xlsx deliverables during bundle creation."""
+    src_dir = tmp_path / "workspace_multi"
+    src_dir.mkdir()
+
+    out_zip = tmp_path / "multi_submission.zip"
+    meta = build_submission_bundle(
+        source_dir=src_dir,
+        deliverable_files=["task.ipynb", "report.docx", "data.xlsx"],
+        output_zip_path=out_zip,
+        job_id="job_multi_999",
+        lab_title="Digital Logic Lab 5",
+        solution_code="module alu(); endmodule",
+        explanation="ALU module with arithmetic and logic operations.",
+        viva_questions=["What is an ALU flags register?"],
+    )
+
+    assert out_zip.exists()
+    assert (src_dir / "task.ipynb").exists()
+    assert (src_dir / "report.docx").exists()
+    assert (src_dir / "data.xlsx").exists()
+
+    manifest = meta["manifest"]
+    files = {f["file"]: f for f in manifest["files"]}
+    assert files["task.ipynb"]["mime_type"] == "application/x-ipynb+json"
+    assert "wordprocessingml" in files["report.docx"]["mime_type"]
+    assert "spreadsheetml" in files["data.xlsx"]["mime_type"]
+
+    assert verify_bundle_digest(out_zip, meta["bundle_sha256"]) is True

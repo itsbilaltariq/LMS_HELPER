@@ -8,8 +8,26 @@ from typing import Any
 
 from app.logging import setup_logging
 from app.security import compute_file_sha256
+from workers.formatters import (
+    convert_solution_to_notebook,
+    convert_solution_to_word,
+    create_excel_spreadsheet,
+)
 
 logger = setup_logging()
+
+MIME_MAP: dict[str, str] = {
+    ".ipynb": "application/x-ipynb+json",
+    ".docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    ".xlsx": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    ".pdf": "application/pdf",
+    ".py": "text/x-python",
+    ".cpp": "text/x-c++src",
+    ".java": "text/x-java-source",
+    ".zip": "application/zip",
+    ".txt": "text/plain",
+    ".md": "text/markdown",
+}
 
 
 class BundleTamperingError(Exception):
@@ -23,10 +41,14 @@ def build_submission_bundle(
     deliverable_files: list[str],
     output_zip_path: str | Path,
     job_id: str,
+    lab_title: str = "Lab Assignment",
+    solution_code: str | None = None,
+    explanation: str | None = None,
     viva_questions: list[str] | None = None,
 ) -> dict[str, Any]:
     """
     Pack validated deliverables into a submission zip and produce a cryptographic manifest.
+    Auto-materializes requested format (.ipynb, .docx, .xlsx) if code/explanation is provided.
     Returns bundle metadata including the aggregate SHA-256 digest.
     """
     src = Path(source_dir).resolve()
@@ -38,18 +60,46 @@ def build_submission_bundle(
     with zipfile.ZipFile(out_zip, "w", zipfile.ZIP_DEFLATED) as zipf:
         for rel_file in deliverable_files:
             file_path = src / rel_file
+
+            # If deliverable does not exist, check if we can generate it
+            if not file_path.exists() and solution_code:
+                suffix = file_path.suffix.lower()
+                if suffix == ".ipynb":
+                    convert_solution_to_notebook(
+                        title=lab_title,
+                        solution_code=solution_code,
+                        walkthrough=explanation or "Solution implementation",
+                        output_path=file_path,
+                        viva_questions=viva_questions,
+                    )
+                elif suffix == ".docx":
+                    convert_solution_to_word(
+                        title=lab_title,
+                        solution_code=solution_code,
+                        walkthrough=explanation or "Solution implementation",
+                        output_path=file_path,
+                        viva_questions=viva_questions,
+                    )
+                elif suffix == ".xlsx":
+                    create_excel_spreadsheet(
+                        sheets_data={"Summary": [["Item", "Detail"], [lab_title, "Completed"]]},
+                        output_path=file_path,
+                    )
+
             if not file_path.exists():
                 raise FileNotFoundError(f"Deliverable file '{rel_file}' not found in workspace")
 
-            # Calculate individual file SHA-256
+            # Calculate individual file SHA-256 and MIME
             file_hash = compute_file_sha256(str(file_path))
             file_size = file_path.stat().st_size
+            mime_type = MIME_MAP.get(file_path.suffix.lower(), "application/octet-stream")
 
             manifest_files.append(
                 {
                     "file": rel_file,
                     "sha256": file_hash,
                     "bytes": file_size,
+                    "mime_type": mime_type,
                 }
             )
 
