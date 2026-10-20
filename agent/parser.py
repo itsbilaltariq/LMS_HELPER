@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import Any
 
 import fitz  # PyMuPDF
+from docx import Document
 from pydantic import BaseModel, Field, ValidationError
 
 from agent.groq_client import GroqAgentClient
@@ -63,6 +64,50 @@ def extract_text_from_pdf(pdf_path: str | Path) -> str:
         raise ValueError("Could not extract any text from the provided PDF (scanned or empty).")
 
     return full_text
+
+
+def extract_text_from_docx(docx_path: str | Path) -> str:
+    """Extract formatted text and tables from a Word document (.docx)."""
+    path = Path(docx_path)
+    if not path.exists():
+        raise FileNotFoundError(f"Word document not found: {path}")
+
+    doc = Document(str(path))
+    lines: list[str] = []
+
+    for paragraph in doc.paragraphs:
+        text = paragraph.text.strip()
+        if text:
+            lines.append(text)
+
+    for table in doc.tables:
+        for row in table.rows:
+            row_cells = [cell.text.strip() for cell in row.cells if cell.text.strip()]
+            if row_cells:
+                lines.append(" | ".join(row_cells))
+
+    full_text = "\n\n".join(lines).strip()
+    if not full_text:
+        raise ValueError("Could not extract any text from the Word document (file is empty).")
+
+    return full_text
+
+
+def extract_document_text(file_path: str | Path) -> str:
+    """Extract text from any supported lab manual format (.pdf, .docx, .txt, .md)."""
+    path = Path(file_path)
+    suffix = path.suffix.lower()
+
+    if suffix == ".pdf":
+        return extract_text_from_pdf(path)
+    elif suffix in (".docx", ".doc"):
+        return extract_text_from_docx(path)
+    elif suffix in (".txt", ".md"):
+        return path.read_text(encoding="utf-8")
+    else:
+        raise ValueError(
+            f"Unsupported document format '{suffix}'. Supported: .pdf, .docx, .txt, .md"
+        )
 
 
 def sanitize_untrusted_text(text: str) -> str:
@@ -181,6 +226,11 @@ JSON Schema format:
     async def parse_pdf(self, pdf_path: str | Path) -> ParsedLab:
         """Parse a local PDF file directly into a validated ParsedLab."""
         raw_text = extract_text_from_pdf(pdf_path)
+        return await self.parse_text_to_schema(raw_text)
+
+    async def parse_document(self, doc_path: str | Path) -> ParsedLab:
+        """Parse any supported lab manual format (.docx, .pdf, .txt, .md) into a ParsedLab."""
+        raw_text = extract_document_text(doc_path)
         return await self.parse_text_to_schema(raw_text)
 
     def save_parsed_result(self, parsed_lab: ParsedLab, output_path: str | Path) -> Path:
