@@ -40,6 +40,7 @@ Legend: `[x]` done, `[ ]` pending. Phases are ordered; each has a **Done when** 
 - [x] Fernet-encrypted LMS credentials
 - [x] Approval gate bound to artifact SHA-256
 - [x] Split `app.py` into modules: `auth.py`, `jobs.py`, `security.py`, `models.py`
+- [x] Student-designated submission URL support (`submission_url` for user-chosen upload targets)
 - [ ] Replace in-memory `DB` with PostgreSQL (SQLAlchemy 2 + Alembic migrations)
 - [ ] Move rate limiting to Redis (works across multiple workers)
 - [ ] Session rotation on login; revoke all sessions on password change

@@ -22,6 +22,7 @@ class CreateJobPayload(BaseModel):
     course_id: str
     assignment_id: str
     title: str
+    submission_url: str
 
 
 @jobs_router.post("", dependencies=[Depends(require_csrf)])
@@ -29,7 +30,7 @@ async def create_job(
     payload: CreateJobPayload,
     current_user: Annotated[User, Depends(get_current_user)],
 ) -> Job:
-    """Create a new lab assistance job."""
+    """Create a new lab assistance job with student-designated submission URL."""
     job_id = str(uuid.uuid4())
     job = Job(
         id=job_id,
@@ -37,6 +38,7 @@ async def create_job(
         course_id=payload.course_id,
         assignment_id=payload.assignment_id,
         title=payload.title,
+        submission_url=payload.submission_url,
         status=JobStatus.PENDING,
     )
     JOBS_DB[job_id] = job

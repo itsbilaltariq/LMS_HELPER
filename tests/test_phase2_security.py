@@ -174,3 +174,37 @@ def test_idor_protection():
     )
     assert resp.status_code == 403
     assert resp.json()["detail"] == "Access denied"
+
+
+def test_create_job_with_user_specified_submission_url():
+    """Verify students can explicitly designate the LMS submission URL."""
+    from datetime import datetime, timedelta, timezone
+
+    user = User(id="u_student", username="bilal", password_hash=hash_password("pw"))
+    USERS_DB[user.id] = user
+
+    session_id = "sess_bilal"
+    SESSIONS_DB[session_id] = SessionData(
+        session_id=session_id,
+        user_id=user.id,
+        expires_at=datetime.now(timezone.utc) + timedelta(hours=1),
+    )
+    csrf_token = generate_csrf_token(session_id, test_settings.APP_SECRET)
+
+    nust_submission_url = "https://lms.nust.edu.pk/mod/assign/view.php?id=98765"
+    resp = client.post(
+        "/jobs",
+        json={
+            "course_id": "CS330",
+            "assignment_id": "Assign1",
+            "title": "Operating Systems Lab 1",
+            "submission_url": nust_submission_url,
+        },
+        cookies={"__Host-session": session_id},
+        headers={"X-CSRF-Token": csrf_token},
+    )
+
+    assert resp.status_code == 200
+    job_data = resp.json()
+    assert job_data["submission_url"] == nust_submission_url
+    assert job_data["title"] == "Operating Systems Lab 1"

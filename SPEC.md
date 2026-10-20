@@ -60,12 +60,16 @@ NUST LMS Lab Assistant is a secure, developer-focused companion tool designed fo
 
 ### Inputs
 1. **Student Credentials**: Encrypted at rest using Fernet; decrypted only in-memory in isolated workers.
-2. **NUST Course/Assignment Link**: Assignment URL or course selection from NUST LMS.
-3. **Lab Assets**: PDF lab instructions, starter files, sample inputs/outputs.
+2. **User-Designated LMS Submission Link**: The student explicitly specifies the exact NUST LMS assignment URL (`submission_url`, e.g. `https://lms.nust.edu.pk/mod/assign/view.php?id=...`). The system strictly uploads to the student-designated link.
+3. **Lab Assets (Multi-Format)**: Word documents (`.docx`), PDF manuals, starter files, sample inputs/outputs.
 4. **Execution Mode**: `Assist / Hint Mode`, `Step-by-step Walkthrough`, or `Verification & Solve`.
 
 ### Outputs
-1. **Validated Code Artifacts**: Clean code meeting rubric guidelines.
+1. **Validated Code & Document Artifacts (Multi-Format)**:
+   - Python / C++ / Java source files.
+   - Word reports (`.docx`) with structured formatting and analysis.
+   - Jupyter Notebooks (`.ipynb`) with reproducible code and markdown cells.
+   - Excel spreadsheets (`.xlsx`) with calculated data and summary tables.
 2. **Pedagogical Walkthroughs**:
    - Explanation of design choices and algorithm trade-offs.
    - Viva / oral exam prep questions based on the student's solution.

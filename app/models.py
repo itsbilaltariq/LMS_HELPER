@@ -45,6 +45,10 @@ class Job(BaseModel):
     course_id: str
     assignment_id: str
     title: str
+    submission_url: str = Field(
+        default="",
+        description="Exact NUST LMS assignment submission link designated by student",
+    )
     status: JobStatus = JobStatus.PENDING
     artifact_hash: str | None = None
     artifact_path: str | None = None
