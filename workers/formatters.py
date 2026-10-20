@@ -4,6 +4,9 @@ import json
 from pathlib import Path
 from typing import Any
 
+from docx import Document
+from openpyxl import Workbook
+
 from app.logging import setup_logging
 
 logger = setup_logging()
@@ -120,3 +123,84 @@ def convert_solution_to_notebook(
         )
 
     return create_jupyter_notebook(cells, output_path)
+
+
+def create_word_document(
+    title: str,
+    sections: list[dict[str, Any]],
+    output_path: str | Path,
+) -> Path:
+    """Create a structured Word document (.docx) for lab reports or deliverables."""
+    doc = Document()
+    doc.add_heading(title, level=0)
+
+    for sec in sections:
+        heading = sec.get("heading", "")
+        content = sec.get("content", "")
+        is_code = sec.get("is_code", False)
+
+        if heading:
+            doc.add_heading(heading, level=1)
+
+        if content:
+            if is_code:
+                p = doc.add_paragraph()
+                run = p.add_run(content)
+                run.font.name = "Courier New"
+            else:
+                doc.add_paragraph(content)
+
+    target = Path(output_path).resolve()
+    target.parent.mkdir(parents=True, exist_ok=True)
+    doc.save(str(target))
+    logger.info(f"Created Word document deliverable: {target.name}")
+    return target
+
+
+def convert_solution_to_word(
+    title: str,
+    solution_code: str,
+    walkthrough: str,
+    output_path: str | Path,
+    viva_questions: list[str] | None = None,
+) -> Path:
+    """Convert solution code and explanations into a formatted Word lab report."""
+    sections: list[dict[str, Any]] = [
+        {"heading": "1. Solution Overview & Walkthrough", "content": walkthrough},
+        {"heading": "2. Implementation Code", "content": solution_code, "is_code": True},
+    ]
+
+    if viva_questions:
+        viva_text = "\n".join([f"{idx + 1}. {q}" for idx, q in enumerate(viva_questions)])
+        sections.append({"heading": "3. Viva Examination Preparation", "content": viva_text})
+
+    return create_word_document(title, sections, output_path)
+
+
+def create_excel_spreadsheet(
+    sheets_data: dict[str, list[list[Any]]],
+    output_path: str | Path,
+) -> Path:
+    """Create an Excel spreadsheet (.xlsx) with named sheets and table rows."""
+    wb = Workbook()
+    first_sheet = True
+
+    for sheet_name, rows in sheets_data.items():
+        if first_sheet:
+            ws = wb.active
+            if ws is not None:
+                ws.title = sheet_name
+            else:
+                ws = wb.create_sheet(title=sheet_name)
+            first_sheet = False
+        else:
+            ws = wb.create_sheet(title=sheet_name)
+
+        for row in rows:
+            ws.append(row)
+
+    target = Path(output_path).resolve()
+    target.parent.mkdir(parents=True, exist_ok=True)
+    wb.save(str(target))
+    logger.info(f"Created Excel deliverable: {target.name}")
+    return target
